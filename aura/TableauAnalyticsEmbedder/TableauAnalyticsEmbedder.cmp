@@ -1,0 +1,175 @@
+<aura:component implements="flexipage:availableForAllPageTypes,omni:availableForOmniSupervisorPage" access="global">
+    <!-- Attributes -->
+    <aura:attribute name="recordId" type="String" description="Record ID context"/>
+    <aura:attribute name="variant" type="String" default="supervisor" description="Component variant or mode"/>
+    <aura:attribute name="height" type="String" default="700px" description="Container height"/>
+    <aura:attribute name="showHeader" type="Boolean" default="true" description="Show component header"/>
+    
+    <!-- Dashboard-specific attributes -->
+    <aura:attribute name="dashboardId" type="String" default="" description="Analytics Dashboard ID"/>
+    <aura:attribute name="dashboardName" type="String" default="Customer Satisfaction Index" description="Dashboard display name"/>
+    <aura:attribute name="hideOnError" type="Boolean" default="false" description="Hide dashboard on error"/>
+    <aura:attribute name="showSharing" type="Boolean" default="false" description="Show sharing options"/>
+    <aura:attribute name="showTitle" type="Boolean" default="true" description="Show dashboard title"/>
+    <aura:attribute name="filter" type="String" description="Dashboard filter JSON"/>
+    
+    <!-- State attributes -->
+    <aura:attribute name="isLoading" type="Boolean" default="true"/>
+    <aura:attribute name="hasError" type="Boolean" default="false"/>
+    <aura:attribute name="errorMessage" type="String" default=""/>
+    
+    <!-- Design attributes for App Builder -->
+    <aura:attribute name="title" type="String" default="Tableau Analytics Dashboard"/>
+    <aura:attribute name="iconName" type="String" default="utility:chart"/>
+    
+    <!-- Events -->
+    <aura:registerEvent name="showToast" type="force:showToast"/>
+    
+    <!-- Handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!-- Component markup -->
+    <div class="tableau-analytics-embedder" style="{!'height: ' + v.height + '; min-height: 400px;'}">
+        
+        <!-- Header Section -->
+        <aura:if isTrue="{!v.showHeader}">
+            <div class="slds-card__header slds-grid">
+                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure">
+                        <lightning:icon iconName="{!v.iconName}" size="small" class="slds-icon-utility-chart"/>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                            <span class="slds-text-heading_small">{!v.title}</span>
+                        </h2>
+                        <aura:if isTrue="{!not(empty(v.dashboardName))}">
+                            <p class="slds-text-body_small slds-text-color_weak">{!v.dashboardName}</p>
+                        </aura:if>
+                    </div>
+                </header>
+                <div class="slds-no-flex">
+                    <lightning:buttonGroup>
+                        <lightning:button 
+                            label="Refresh"
+                            iconName="utility:refresh"
+                            onclick="{!c.refreshDashboard}"
+                            variant="neutral"
+                            title="Refresh Dashboard"/>
+                        <aura:if isTrue="{!v.showSharing}">
+                            <lightning:button 
+                                label="Share"
+                                iconName="utility:share"
+                                onclick="{!c.shareDashboard}"
+                                variant="neutral"
+                                title="Share Dashboard"/>
+                        </aura:if>
+                        <lightning:button 
+                            iconName="utility:settings"
+                            onclick="{!c.showDashboardSettings}"
+                            variant="neutral"
+                            title="Dashboard Settings"/>
+                    </lightning:buttonGroup>
+                </div>
+            </div>
+        </aura:if>
+
+        <!-- Loading State -->
+        <aura:if isTrue="{!v.isLoading}">
+            <div class="slds-card__body slds-card__body_inner">
+                <div class="slds-align_absolute-center" style="height: 200px;">
+                    <lightning:spinner 
+                        alternativeText="Loading analytics dashboard..." 
+                        size="large"
+                        variant="brand"/>
+                    <p class="slds-text-heading_small slds-m-top_medium">
+                        Loading {!v.dashboardName}...
+                    </p>
+                </div>
+            </div>
+        </aura:if>
+
+        <!-- Error State -->
+        <aura:if isTrue="{!v.hasError}">
+            <div class="slds-card__body slds-card__body_inner">
+                <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error">
+                    <span class="slds-assistive-text">Error</span>
+                    <lightning:icon iconName="utility:error" size="small" variant="inverse" class="slds-m-right_x-small"/>
+                    <h2><strong>Unable to Load Analytics Dashboard</strong></h2>
+                    <p class="slds-m-top_small">{!v.errorMessage}</p>
+                </div>
+                
+                <div class="slds-text-align_center slds-m-top_large">
+                    <lightning:button 
+                        label="Retry"
+                        iconName="utility:refresh"
+                        onclick="{!c.retryLoadDashboard}"
+                        variant="brand"/>
+                    <lightning:button 
+                        label="Configure"
+                        iconName="utility:settings"
+                        onclick="{!c.showDashboardSettings}"
+                        variant="neutral"
+                        class="slds-m-left_small"/>
+                </div>
+            </div>
+        </aura:if>
+
+        <!-- Main Analytics Dashboard Content -->
+        <aura:if isTrue="{!and(not(v.isLoading), not(v.hasError))}">
+            <div class="slds-card__body slds-card__body_inner slds-p-around_none">
+                <!-- Embedded Analytics Dashboard -->
+                <div class="analytics-dashboard-container">
+                    <c:analytics_embedding:dashboard 
+                        aura:id="analyticsDashboard"
+                        dashboardId="{!v.dashboardId}"
+                        hideOnError="{!v.hideOnError}"
+                        showSharing="{!v.showSharing}"
+                        showTitle="{!v.showTitle}"
+                        filter="{!v.filter}"
+                        recordId="{!v.recordId}"
+                        onready="{!c.onDashboardReady}"
+                        onerror="{!c.onDashboardError}"
+                        onfilterchange="{!c.onDashboardFilterChange}"/>
+                </div>
+
+                <!-- Dashboard Info Panel (for supervisor context) -->
+                <aura:if isTrue="{!v.variant == 'supervisor'}">
+                    <div class="supervisor-context slds-box slds-box_x-small slds-theme_success slds-m-top_small">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning:icon iconName="utility:omni_channel" size="small" variant="inverse"/>
+                            </div>
+                            <div class="slds-media__body">
+                                <p class="slds-text-body_small">
+                                    <strong>Omni Supervisor Dashboard:</strong> Real-time analytics integrated with your workspace.
+                                    <aura:if isTrue="{!not(empty(v.recordId))}">
+                                        <br/>Context: {!v.recordId}
+                                    </aura:if>
+                                    <aura:if isTrue="{!not(empty(v.dashboardId))}">
+                                        <br/>Dashboard ID: {!v.dashboardId}
+                                    </aura:if>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </aura:if>
+
+                <!-- Filter Information (if filters applied) -->
+                <aura:if isTrue="{!not(empty(v.filter))}">
+                    <div class="filter-info slds-box slds-box_x-small slds-theme_shade slds-m-top_small">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <lightning:icon iconName="utility:filterList" size="small"/>
+                            </div>
+                            <div class="slds-media__body">
+                                <p class="slds-text-body_small">
+                                    <strong>Active Filters:</strong> Dashboard is filtered based on current context
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </aura:if>
+            </div>
+        </aura:if>
+    </div>
+</aura:component>
