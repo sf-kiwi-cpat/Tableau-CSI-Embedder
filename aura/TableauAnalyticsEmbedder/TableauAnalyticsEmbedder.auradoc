@@ -1,0 +1,49 @@
+<aura:documentation>
+    <aura:description>
+        <p>The <code>TableauAnalyticsEmbedder</code> is an Aura component that wraps the 
+        <code>analytics_embedding:dashboard</code> Lightning Web Component, providing enhanced 
+        functionality for Omni-Channel Supervisor pages and Lightning Experience.</p>
+        
+        <h4>Key Features:</h4>
+        <ul>
+            <li><strong>Native Analytics Integration:</strong> Direct embedding of Salesforce Analytics/Tableau dashboards</li>
+            <li><strong>Omni Supervisor Support:</strong> Implements <code>omni:availableForOmniSupervisorPage</code></li>
+            <li><strong>Context Awareness:</strong> Automatically applies filters based on record context</li>
+            <li><strong>Enhanced Controls:</strong> Refresh, sharing, and configuration options</li>
+            <li><strong>Error Handling:</strong> Graceful fallbacks and user-friendly error messages</li>
+            <li><strong>Event Handling:</strong> Responds to dashboard ready, error, and filter change events</li>
+        </ul>
+        
+        <h4>Dashboard Integration:</h4>
+        <ul>
+            <li><strong>Direct Embedding:</strong> Uses <code>analytics_embedding:dashboard</code> for native integration</li>
+            <li><strong>Filter Support:</strong> JSON-based filtering with context awareness</li>
+            <li><strong>Sharing Controls:</strong> Optional sharing functionality</li>
+            <li><strong>Real-time Updates:</strong> Responds to dashboard filter changes</li>
+        </ul>
+        
+        <h4>Usage Contexts:</h4>
+        <ul>
+            <li>Omni-Channel Supervisor workspace utilities</li>
+            <li>Lightning App Builder pages</li>
+            <li>Lightning Experience record pages</li>
+            <li>Analytics dashboard embedding scenarios</li>
+        </ul>
+        
+        <h4>Configuration Options:</h4>
+        <ul>
+            <li><strong>Dashboard ID:</strong> Specifies which analytics dashboard to embed</li>
+            <li><strong>Filtering:</strong> JSON filter configuration for data context</li>
+            <li><strong>Display Options:</strong> Control title, sharing, and header visibility</li>
+            <li><strong>Supervisor Mode:</strong> Enhanced styling and context for omni-channel</li>
+        </ul>
+    </aura:description>
+    
+    <aura:example name="BasicAnalytics" ref="TableauAnalyticsEmbedder" label="Basic Analytics Dashboard">
+        <p>Basic usage with a specific dashboard ID for analytics embedding.</p>
+    </aura:example>
+    
+    <aura:example name="SupervisorAnalytics" ref="TableauAnalyticsEmbedder" label="Omni Supervisor Analytics">
+        <p>Analytics dashboard configured for omni-channel supervisor workspace with context filtering.</p>
+    </aura:example>
+</aura:documentation>
