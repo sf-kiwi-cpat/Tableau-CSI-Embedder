@@ -1,0 +1,13 @@
+<design:component label="Tableau Analytics Embedder">
+    <design:attribute name="title" label="Component Title" description="Title displayed in the component header"/>
+    <design:attribute name="dashboardId" label="Dashboard ID" description="Analytics Dashboard ID to embed"/>
+    <design:attribute name="dashboardName" label="Dashboard Name" description="Display name for the dashboard"/>
+    <design:attribute name="height" label="Container Height" description="Height of the component container (e.g., 600px, 100vh)"/>
+    <design:attribute name="showHeader" label="Show Header" description="Display the component header with controls"/>
+    <design:attribute name="showSharing" label="Show Sharing" description="Display sharing options in the dashboard"/>
+    <design:attribute name="showTitle" label="Show Dashboard Title" description="Display the dashboard title"/>
+    <design:attribute name="hideOnError" label="Hide on Error" description="Hide dashboard if it fails to load"/>
+    <design:attribute name="variant" label="Variant" description="Component variant (default, supervisor, etc.)"/>
+    <design:attribute name="iconName" label="Header Icon" description="Icon displayed in the component header"/>
+    <design:attribute name="filter" label="Dashboard Filter" description="JSON filter string for the dashboard"/>
+</design:component>
