@@ -1,0 +1,25 @@
+<apex:page showHeader="false" sidebar="false" docType="html-5.0">
+    <apex:includeLightning />
+
+    <div id="lwc-container"></div>
+
+
+    <script>
+        $Lightning.use("tableau_einstein:tableauEinsteinApp", function() {
+            $Lightning.createComponent(
+                "analytics_embedding:dashboard", 
+                {
+                    "dashboardId":"Customer_Signals",
+                    "height": "4472",
+                    "hideTitle": "true",
+                    "flexipageComponentInstanceIdentifier": "Customer_Signal"
+                },                 
+                "lwc-container",   
+                function(component) {
+                    console.log('LWC is ready!');
+                }
+            );
+        });
+    </script>
+    
+</apex:page>
